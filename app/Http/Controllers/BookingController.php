@@ -63,54 +63,21 @@ class BookingController extends Controller
     {
         $request->validate([
             'room_id' => 'required|exists:rooms,id',
-            'checkin_date' => 'required|date',
-            'checkout_date' => 'required|date|after:checkin_date',
-            'services' => 'nullable|array',
+            'booking_date' => 'required|date',
+            'booking_time' => 'required',
+            'payment_method' => 'required|in:credit_card,paypal,cash', // التحقق من طريقة الدفع
         ]);
     
-        // حساب السعر الإجمالي
-        $room = Room::find($request->room_id);
-        $totalPrice = $room->price;
-    
-        if ($request->has('services')) {
-            foreach ($request->services as $service) {
-                switch ($service) {
-                    case 'breakfast':
-                        $totalPrice += 10;
-                        break;
-                    case 'lunch':
-                        $totalPrice += 15;
-                        break;
-                    case 'dinner':
-                        $totalPrice += 20;
-                        break;
-                    case 'room_service':
-                        $totalPrice += 25;
-                        break;
-                    case 'parking':
-                        $totalPrice += 5;
-                        break;
-                    case 'gym':
-                        $totalPrice += 10;
-                        break;
-                    case 'pool':
-                        $totalPrice += 10;
-                        break;
-                }
-            }
-        }
-    
-        // حفظ الحجز في قاعدة البيانات
         $booking = new Booking();
         $booking->user_id = auth()->id();
         $booking->room_id = $request->room_id;
-        $booking->checkin_date = $request->checkin_date;
-        $booking->checkout_date = $request->checkout_date;
-        $booking->services = json_encode($request->services); // حفظ الخدمات كـ JSON
-        $booking->total_price = $totalPrice;
+        $booking->booking_date = $request->booking_date;
+        $booking->booking_time = $request->booking_time;
+        $booking->payment_method = $request->payment_method; // حفظ طريقة الدفع
+        $booking->status = 'pending'; // حالة الحجز
         $booking->save();
     
-        return redirect()->back()->with('success', 'Booking confirmed successfully!');
+        return redirect()->route('booking.index')->with('success', 'Booking confirmed successfully!');
     }
 
     public function cancel($id)

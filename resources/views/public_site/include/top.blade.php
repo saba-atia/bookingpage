@@ -7,6 +7,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title> @yield('title')   </title>
+    @stack('styles')
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="author" content="">

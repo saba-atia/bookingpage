@@ -35,6 +35,7 @@
       <!-- banner -->
   @yield('content')
       <!-- end contact -->
+      @stack('scripts')
       <!--  footer -->
   @include('public_site.include.footer')
       <!-- end footer -->

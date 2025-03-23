@@ -118,6 +118,14 @@
             <input type="checkbox" name="pool" value="1"> Pool Access<br>
         </div>
     </div>
+    <div class="form-group">
+        <label>Payment Method</label>
+        <div>
+            <input type="radio" name="payment_method" value="credit_card" required> Credit Card<br>
+            <input type="radio" name="payment_method" value="paypal"> PayPal<br>
+            <input type="radio" name="payment_method" value="cash"> Cash on Arrival<br>
+        </div>
+    </div>
 
     <button type="submit" class="btn btn-primary">Confirm Booking</button>
 </form>
@@ -135,44 +143,46 @@
                 @if($bookings->isEmpty())
                     <p>You have no bookings yet.</p>
                 @else
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Room</th>
-                                <th>Check-in Date</th>
-                                <th>Check-in Time</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($bookings as $booking)
-                            <tr>
-                                <td>{{ $booking->room->name }}</td>
-                                <td>{{ $booking->booking_date }}</td>
-                                <td>{{ $booking->booking_time }}</td>
-                                <td>
-                                    <span class="badge 
-                                        @if($booking->status == 'confirmed') badge-success
-                                        @elseif($booking->status == 'pending') badge-warning
-                                        @elseif($booking->status == 'cancelled') badge-danger
-                                        @endif">
-                                        {{ $booking->status }}
-                                    </span>
-                                </td>
-                                <td>
-                                    @if($booking->status == 'pending')
-                                        <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                                        </form>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Room</th>
+                            <th>Check-in Date</th>
+                            <th>Check-in Time</th>
+                            <th>Payment Method</th> <!-- إضافة عمود جديد -->
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($bookings as $booking)
+                        <tr>
+                            <td>{{ $booking->room->name }}</td>
+                            <td>{{ $booking->booking_date }}</td>
+                            <td>{{ $booking->booking_time }}</td>
+                            <td>{{ ucfirst(str_replace('_', ' ', $booking->payment_method)) }}</td> <!-- عرض طريقة الدفع -->
+                            <td>
+                                <span class="badge 
+                                    @if($booking->status == 'confirmed') badge-success
+                                    @elseif($booking->status == 'pending') badge-warning
+                                    @elseif($booking->status == 'cancelled') badge-danger
+                                    @endif">
+                                    {{ $booking->status }}
+                                </span>
+                            </td>
+                            <td>
+                                @if($booking->status == 'pending')
+                                    <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                    </form>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
                 @endif
             @else
                 <p>You need to login to view your bookings.</p>
@@ -183,207 +193,7 @@
 
 @endsection
 
-@push('styles')
-<style>
-    /* تنسيق عام للصفحة */
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: #f8f9fa;
-    }
 
-    /* تنسيق العنوان */
-    .title h2 {
-        font-size: 36px;
-        font-weight: bold;
-        color: #007bff;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    /* تنسيق الكارد */
-    .card {
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        background: white;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-title {
-        font-size: 24px;
-        font-weight: bold;
-        color: #333;
-        margin-top: 15px;
-    }
-
-    .card-text {
-        font-size: 16px;
-        color: #555;
-        margin-bottom: 10px;
-    }
-
-    .card-text strong {
-        color: #007bff;
-    }
-
-    /* تنسيق الأزرار */
-    .btn-primary {
-        background: linear-gradient(145deg, #007bff, #0056b3);
-        border: none;
-        padding: 12px 25px;
-        font-size: 16px;
-        border-radius: 10px;
-        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(145deg, #0056b3, #007bff);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
-    }
-
-    .btn-danger {
-        background: linear-gradient(145deg, #dc3545, #c82333);
-        border: none;
-        padding: 8px 16px;
-        font-size: 14px;
-        border-radius: 8px;
-        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
-    }
-
-    .btn-danger:hover {
-        background: linear-gradient(145deg, #c82333, #dc3545);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
-    }
-
-    /* تنسيق الجدول */
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .table th, .table td {
-        padding: 12px;
-        text-align: center;
-        border: 1px solid #e9ecef;
-    }
-
-    .table th {
-        background: linear-gradient(145deg, #007bff, #0056b3);
-        color: white;
-        font-weight: bold;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    /* تنسيق البادجات */
-    .badge {
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    .badge-success {
-        background: linear-gradient(145deg, #28a745, #218838);
-        color: white;
-    }
-
-    .badge-warning {
-        background: linear-gradient(145deg, #ffc107, #e0a800);
-        color: black;
-    }
-
-    .badge-danger {
-        background: linear-gradient(145deg, #dc3545, #c82333);
-        color: white;
-    }
-
-    /* تنسيق الـ modal */
-    .modal-content {
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        background: white;
-    }
-
-    .modal-header {
-        background: linear-gradient(145deg, #007bff, #0056b3);
-        color: white;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-        padding: 20px;
-        border-bottom: none;
-    }
-
-    .modal-title {
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    .close {
-        color: white;
-        opacity: 0.8;
-        font-size: 28px;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .close:hover {
-        opacity: 1;
-        transform: rotate(90deg);
-    }
-
-    .modal-body {
-        padding: 25px;
-    }
-
-    .form-group label {
-        font-weight: bold;
-        color: #007bff;
-        margin-bottom: 10px;
-    }
-
-    .form-control {
-        border-radius: 10px;
-        border: 2px solid #e9ecef;
-        padding: 12px;
-        font-size: 16px;
-        margin-bottom: 15px;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
-    }
-
-    /* تنسيق الخدمات الإضافية */
-    .form-group input[type="checkbox"] {
-        margin-right: 10px;
-        transform: scale(1.2);
-        cursor: pointer;
-    }
-
-    .form-group label {
-        font-weight: normal;
-        color: #555;
-        cursor: pointer;
-    }
-</style>
-@endpush
 
 @push('scripts')
 <script>
