@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); // ربط الحجز بالمستخدم (إذا كان لديك نظام مستخدمين)
             $table->date('booking_date'); // تاريخ الحجز
             $table->time('booking_time'); // وقت الحجز
+            $table->date('checkin');
+        $table->date('checkout');
             $table->string('status')->default('pending'); // حالة الحجز (مثلاً: pending, confirmed, cancelled)
             $table->timestamps(); // created_at و updated_at
         });

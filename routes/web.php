@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,8 +55,18 @@ Route::get('/about', function () {
                     Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
                     Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
-                    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+                    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');                    Route::get('/booking/{id}', [BookingController::class, 'show'])->name('bookingpage');
+
 
                     Route::get('/booking/search', [BookingController::class, 'search'])->name('booking.search');
 
                     Route::delete('/booking/{id}', [BookingController::class, 'cancel'])->name('booking.cancel');
+
+                    Route::get('/rooms', [RoomController::class, 'index'])->name('rooms');
+
+                    Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+                    Route::get('/booking/{id}', [BookingController::class, 'show'])->name('bookingpage');
+                    Route::get('/booking/{room}', [BookingController::class, 'show'])->name('booking');
+
+                    Route::get('/rooms', [RoomController::class, 'showRooms'])->name('rooms.page');
+                    Route::get('/ourroom', [RoomController::class, 'index'])->name('rooms.page');

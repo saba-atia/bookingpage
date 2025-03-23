@@ -50,219 +50,340 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="title">
-                    <h2>Book a Service</h2>
+                    <h2>Book Your Stay</h2>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Search and Filter Section -->
+<!-- عرض تفاصيل الغرفة إذا تم تحديدها -->
+@if(isset($room))
 <div class="container mt-4">
     <div class="row">
-        <div class="col-md-6">
-            <form action="{{ route('booking.index') }}" method="GET">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search services..." value="{{ request('search') }}">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
-                    </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <center>
+                        <img src="{{ asset('images/' . $room->image) }}" alt="{{ $room->name }}" class="img-fluid room-img">
+                        <h3 class="card-title">{{ $room->name }}</h3>
+                        <p class="card-text">{{ $room->description }}</p>
+                        <p class="card-text"><strong>Price: ${{ $room->price }}</strong></p>
+                        <p class="card-text"><strong>Room Type:</strong> {{ ucfirst($room->room_type) }}</p>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#bookingModal{{ $room->id }}">Book Now</button>
+                    </center>
                 </div>
-            </form>
+            </div>
         </div>
-        <div class="col-md-3">
-            <select class="form-control" onchange="window.location.href = this.value">
-                <option value="{{ route('booking.index') }}">Filter By</option>
-                <option value="{{ route('booking.index', ['room_type' => 'single']) }}" {{ request('room_type') == 'single' ? 'selected' : '' }}>Single Room</option>
-                <option value="{{ route('booking.index', ['room_type' => 'double']) }}" {{ request('room_type') == 'double' ? 'selected' : '' }}>Double Room</option>
-                <option value="{{ route('booking.index', ['room_type' => 'suite']) }}" {{ request('room_type') == 'suite' ? 'selected' : '' }}>Suite</option>
-            </select>
+    </div>
+</div>
+@endif
+
+<!-- Booking Modal -->
+@if(isset($room))
+<div class="modal fade" id="bookingModal{{ $room->id }}" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel{{ $room->id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingModalLabel{{ $room->id }}">Book {{ $room->name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('booking.store') }}" method="POST">
+    @csrf
+    <input type="hidden" name="room_id" value="{{ $room->id }}">
+    
+    <div class="form-group">
+        <label for="date">Check-in Date</label>
+        <input type="date" name="booking_date" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="time">Check-in Time</label>
+        <input type="time" name="booking_time" class="form-control" required>
+    </div>
+
+    <!-- إضافة خيارات إضافية -->
+    <div class="form-group">
+        <label>Additional Services</label>
+        <div>
+            <input type="checkbox" name="breakfast" value="1"> Breakfast<br>
+            <input type="checkbox" name="lunch" value="1"> Lunch<br>
+            <input type="checkbox" name="dinner" value="1"> Dinner<br>
+            <input type="checkbox" name="room_service" value="1"> Room Service<br>
+            <input type="checkbox" name="parking" value="1"> Parking<br>
+            <input type="checkbox" name="wifi" value="1"> Free Wi-Fi<br>
+            <input type="checkbox" name="gym" value="1"> Gym Access<br>
+            <input type="checkbox" name="pool" value="1"> Pool Access<br>
         </div>
-        <div class="col-md-3">
-            <select class="form-control" onchange="window.location.href = this.value">
-                <option value="{{ route('booking.index') }}">Sort By</option>
-                <option value="{{ route('booking.index', ['sort' => 'price', 'direction' => 'asc']) }}" {{ request('sort') == 'price' && request('direction') == 'asc' ? 'selected' : '' }}>Price: Low to High</option>
-                <option value="{{ route('booking.index', ['sort' => 'price', 'direction' => 'desc']) }}" {{ request('sort') == 'price' && request('direction') == 'desc' ? 'selected' : '' }}>Price: High to Low</option>
-            </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+</form>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- My Bookings Section -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>My Bookings</h2>
+            @if(auth()->check())
+                @if($bookings->isEmpty())
+                    <p>You have no bookings yet.</p>
+                @else
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Room</th>
+                                <th>Check-in Date</th>
+                                <th>Check-in Time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($bookings as $booking)
+                            <tr>
+                                <td>{{ $booking->room->name }}</td>
+                                <td>{{ $booking->booking_date }}</td>
+                                <td>{{ $booking->booking_time }}</td>
+                                <td>
+                                    <span class="badge 
+                                        @if($booking->status == 'confirmed') badge-success
+                                        @elseif($booking->status == 'pending') badge-warning
+                                        @elseif($booking->status == 'cancelled') badge-danger
+                                        @endif">
+                                        {{ $booking->status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($booking->status == 'pending')
+                                        <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            @else
+                <p>You need to login to view your bookings.</p>
+            @endif
         </div>
     </div>
 </div>
 
-<!-- Service Listings -->
-<div class="our_room">
-   <div class="container">
-       <div class="row">
-           @foreach($services as $service)
-           <div class="col-md-4 col-sm-6 mb-4">
-               <div id="serv_hover" class="room card h-100">
-                   <div class="room_img card-img-top">
-                       <figure>
-                           @if($service->room_type == 'single')
-                               <img src="{{ asset('images/single room.png') }}" alt="Single Room" class="img-fluid">
-                           @elseif($service->room_type == 'double')
-                               <img src="{{ asset('images/double room.png') }}" alt="Double Room" class="img-fluid">
-                           @elseif($service->room_type == 'suite')
-                               <img src="{{ asset('images/suite.png') }}" alt="Suite Room" class="img-fluid">
-                           @else
-                               <img src="{{ asset('images/default_room.jpg') }}" alt="Default Room" class="img-fluid">
-                           @endif
-                       </figure>
-                   </div>
-                   <div class="bed_room card-body">
-                       <h3 class="card-title">{{ $service->name }}</h3>
-                       <p class="card-text">{{ $service->description }}</p>
-                       <p class="card-text"><strong>Price: ${{ $service->price }}</strong></p>
-
-                       <!-- عرض الخدمات الإضافية -->
-                       <div class="service-options mb-3">
-                           @if($service->room_type)
-                               <p class="card-text"><strong>Room Type:</strong> {{ ucfirst($service->room_type) }}</p>
-                           @endif
-                           @if($service->breakfast)
-                               <p class="card-text"><strong>Includes Breakfast</strong></p>
-                           @endif
-                           @if($service->lunch)
-                               <p class="card-text"><strong>Includes Lunch</strong></p>
-                           @endif
-                           @if($service->dinner)
-                               <p class="card-text"><strong>Includes Dinner</strong></p>
-                           @endif
-                           @if($service->room_service)
-                               <p class="card-text"><strong>Room Service Available</strong></p>
-                           @endif
-                           @if($service->parking)
-                               <p class="card-text"><strong>Parking Available</strong></p>
-                           @endif
-                           @if($service->wifi)
-                               <p class="card-text"><strong>Free Wi-Fi</strong></p>
-                           @endif
-                           @if($service->gym)
-                               <p class="card-text"><strong>Gym Access</strong></p>
-                           @endif
-                           @if($service->pool)
-                               <p class="card-text"><strong>Pool Access</strong></p>
-                           @endif
-                       </div>
-
-                       <button class="btn btn-primary" data-toggle="modal" data-target="#bookingModal{{ $service->id }}">Book Now</button>
-                   </div>
-               </div>
-           </div>
-
-           <!-- Booking Modal -->
-           <div class="modal fade" id="bookingModal{{ $service->id }}" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel{{ $service->id }}" aria-hidden="true">
-               <div class="modal-dialog" role="document">
-                   <div class="modal-content">
-                       <div class="modal-header">
-                           <h5 class="modal-title" id="bookingModalLabel{{ $service->id }}">Book {{ $service->name }}</h5>
-                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                               <span aria-hidden="true">&times;</span>
-                           </button>
-                       </div>
-                       <div class="modal-body">
-                           <form action="{{ route('booking.store') }}" method="POST">
-                               @csrf
-                               <input type="hidden" name="service_id" value="{{ $service->id }}">
-                               
-                               <div class="form-group">
-                                   <label for="date">Date</label>
-                                   <input type="date" name="booking_date" class="form-control" required>
-                               </div>
-                               <div class="form-group">
-                                   <label for="time">Time</label>
-                                   <input type="time" name="booking_time" class="form-control" required>
-                               </div>
-
-                               <!-- إضافة خيارات إضافية -->
-                               <div class="form-group">
-                                   <label for="room_type">Room Type</label>
-                                   <select name="room_type" class="form-control" required>
-                                       <option value="single">Single Room</option>
-                                       <option value="double">Double Room</option>
-                                       <option value="suite">Suite</option>
-                                   </select>
-                               </div>
-                               <div class="form-group">
-                                   <label>Additional Services</label>
-                                   <div>
-                                       <input type="checkbox" name="breakfast" value="1"> Breakfast<br>
-                                       <input type="checkbox" name="lunch" value="1"> Lunch<br>
-                                       <input type="checkbox" name="dinner" value="1"> Dinner<br>
-                                       <input type="checkbox" name="room_service" value="1"> Room Service<br>
-                                       <input type="checkbox" name="parking" value="1"> Parking<br>
-                                       <input type="checkbox" name="wifi" value="1"> Free Wi-Fi<br>
-                                       <input type="checkbox" name="gym" value="1"> Gym Access<br>
-                                       <input type="checkbox" name="pool" value="1"> Pool Access<br>
-                                   </div>
-                               </div>
-
-                               <button type="submit" class="btn btn-primary">Confirm Booking</button>
-                           </form>
-                       </div>
-                   </div>
-               </div>
-           </div>
-           @endforeach
-       </div>
-   </div>
-</div>
-
-<!-- My Bookings Section -->
-<div class="container mt-5">
-   <div class="row">
-       <div class="col-md-12">
-           <h2>My Bookings</h2>
-           @if(auth()->check())
-               @if($bookings->isEmpty()) <!-- استخدام isEmpty() للتحقق من وجود بيانات -->
-                   <p>You have no bookings yet.</p>
-               @else
-                   <table class="table table-bordered">
-                       <thead>
-                           <tr>
-                               <th>Service</th>
-                               <th>Date</th>
-                               <th>Time</th>
-                               <th>Status</th>
-                               <th>Action</th>
-                           </tr>
-                       </thead>
-                       <tbody>
-                           @foreach($bookings as $booking)
-                           <tr>
-                               <td>{{ $booking->service->name }}</td>
-                               <td>{{ $booking->booking_date }}</td>
-                               <td>{{ $booking->booking_time }}</td>
-                               <td>
-                                   <span class="badge 
-                                       @if($booking->status == 'confirmed') badge-success
-                                       @elseif($booking->status == 'pending') badge-warning
-                                       @elseif($booking->status == 'cancelled') badge-danger
-                                       @endif">
-                                       {{ $booking->status }}
-                                   </span>
-                               </td>
-                               <td>
-                                   @if($booking->status == 'pending')
-                                       <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" style="display:inline;">
-                                           @csrf
-                                           @method('DELETE')
-                                           <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                                       </form>
-                                   @endif
-                               </td>
-                           </tr>
-                           @endforeach
-                       </tbody>
-                   </table>
-               @endif
-           @else
-               <p>You need to login to view your bookings.</p>
-           @endif
-       </div>
-   </div>
-</div>
-
 @endsection
+
+@push('styles')
+<style>
+    /* تنسيق عام للصفحة */
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    /* تنسيق العنوان */
+    .title h2 {
+        font-size: 36px;
+        font-weight: bold;
+        color: #007bff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* تنسيق الكارد */
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: white;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin-top: 15px;
+    }
+
+    .card-text {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .card-text strong {
+        color: #007bff;
+    }
+
+    /* تنسيق الأزرار */
+    .btn-primary {
+        background: linear-gradient(145deg, #007bff, #0056b3);
+        border: none;
+        padding: 12px 25px;
+        font-size: 16px;
+        border-radius: 10px;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(145deg, #0056b3, #007bff);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+    }
+
+    .btn-danger {
+        background: linear-gradient(145deg, #dc3545, #c82333);
+        border: none;
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 8px;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(145deg, #c82333, #dc3545);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+    }
+
+    /* تنسيق الجدول */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .table th, .table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #e9ecef;
+    }
+
+    .table th {
+        background: linear-gradient(145deg, #007bff, #0056b3);
+        color: white;
+        font-weight: bold;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* تنسيق البادجات */
+    .badge {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .badge-success {
+        background: linear-gradient(145deg, #28a745, #218838);
+        color: white;
+    }
+
+    .badge-warning {
+        background: linear-gradient(145deg, #ffc107, #e0a800);
+        color: black;
+    }
+
+    .badge-danger {
+        background: linear-gradient(145deg, #dc3545, #c82333);
+        color: white;
+    }
+
+    /* تنسيق الـ modal */
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        background: white;
+    }
+
+    .modal-header {
+        background: linear-gradient(145deg, #007bff, #0056b3);
+        color: white;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        padding: 20px;
+        border-bottom: none;
+    }
+
+    .modal-title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .close {
+        color: white;
+        opacity: 0.8;
+        font-size: 28px;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .close:hover {
+        opacity: 1;
+        transform: rotate(90deg);
+    }
+
+    .modal-body {
+        padding: 25px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px;
+        font-size: 16px;
+        margin-bottom: 15px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+    }
+
+    /* تنسيق الخدمات الإضافية */
+    .form-group input[type="checkbox"] {
+        margin-right: 10px;
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .form-group label {
+        font-weight: normal;
+        color: #555;
+        cursor: pointer;
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>
