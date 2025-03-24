@@ -13,9 +13,7 @@
           <li class="nav-item">
              <a class="nav-link" href="/ourroom">Our room</a>
           </li>
-          <li class="nav-item">
-             <a class="nav-link" href="/booking">Booking</a>
-          </li>
+         
           <li class="nav-item">
              <a class="nav-link" href="/blog">Blog</a>
           </li>

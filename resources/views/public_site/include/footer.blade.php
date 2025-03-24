@@ -16,7 +16,6 @@
                    <li class="active"><a href="/">Home</a></li>
                    <li><a href="/about"> about</a></li>
                    <li><a href="/ourroom">Our Room</a></li>
-                   <li><a href="/booking">Booking</a></li>
                    <li><a href="/blog">Blog</a></li>
                    <li><a href="/contact">Contact Us</a></li>
                 </ul>
