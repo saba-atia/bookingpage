@@ -1,147 +1,57 @@
 @extends('public_site.layouts.welcome')
-@section('title' , 'room details')
+
+@section('title', 'Room Details')
 
 @section('content')
-<div class="row">
 
-  <center>      
-    
-       <div class="col-md-8">
-          <div id="serv_hover"  class="room">
-             <div style="padding:20px" class="room_img">
-                <figure><img style="height: 300px ; width:800px" src="images/{{$room->image}}" alt="#"/></figure>
+<!-- loader -->
+<div class="loader_bg" id="loader-bg">
+   <div class="loader"><img src="{{ asset('images/loading.gif') }}" alt="Loading..."/></div>
+</div>
+
+<!-- Room Details Section -->
+<div class="our_room" style="background-color: #0F1521; padding: 40px 0;">
+    <div class="container">
+       <div class="row">
+          <div class="col-md-12">
+             <div class="title" style="text-align: center; margin-bottom: 30px;">
+                <h2 style="font-size: 36px; font-weight: bold; color: white; text-transform: uppercase;">OUR ROOM</h2>
+                <div style="width: 100px; height: 3px; background-color: #ff6b6b; margin: 15px auto;"></div>
              </div>
-             <div class="bed_room">
-                <h2>{{room->room_title}} </h2>
-              
-             <p style="padding:12px">{{$room->description}}</p>
-            <h4 style="padding:12px">Free wifi :{{$room->wifi}}</h4>
-            <h4 style="padding:12px"> Room Type :{{$room->room_type}}</h4>
-            <h4 style="padding:12px"> Price :{{$room->room_price}}</h4>
-
-            </div>
           </div>
        </div>
-
-       <div class="col-md-4">
-      <h1 style="font-size:40px !important">Book Room</h1>
-
-@if(session()->has('message'))
-
-<div class="alert alert-success">
-    <button type="button" class="close" data-bs-dismiss="alert">X </button>
-    {{session()->get('message')}}
-
+    </div>
 </div>
 
-@endif
-
-
-
-      @if(errors)
-
-      @foreach ($errors->all() as $errors )
-      <li style="color"red>
-        {{$errors}}
-      </li>
-      
-
-
-      
-      @endforeach
-          @endif
-      @endforeach
-       
-      <form action="{{url('add_booking' ,$room->id)}}" mathod="post">
-    @csrf
-        
-    
- 
-      <div>
-       <label> Name </label>
-       <input type="text" name="name"
-       @if(Auth::id())   
-        value="{{Auth ::user()->name}}"
-        @endif
-        >
-    </div>  
-    
-    <div>
-        <label>Email</label>
-        <input type="email" name="email"
-        
-        @if(Auth::id())   
-        value="{{Auth ::user()->email}}"
-        @endif
-        >
-        
-        >
-     </div>   
-
-     <div>
-        <label>Phone</label>
-        <input type="number" name="phone"
-        >
-        
-        >
-     </div>   
-
-     <div>
-        <label>Start Date</label>
-        <input type="date" name="staertDate" id=startDate>
-     </div>   
-
-     <div>
-        <label> End Date </label>
-        <input type="date" name="endDate" id="endDate">
-     </div>   
-<div style="padding-top:20px">
-     <div>
-        <input type="submit" style="background-color: skyblue;" class="btn-btn primary" value="Book Room">
-     </div>   
-    </form>
+<div class="room_details" style="padding: 60px 0;">
+    <div class="container">
+       <div class="row">
+          <div class="col-md-8 offset-md-2">
+             <div class="room" style="background: white; box-shadow: 0 0 20px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+                <div class="room_img">
+                   <figure><img style="width:100%; height: 400px; object-fit: cover;" src="{{ asset('images/' . $room->image) }}" alt="{{ $room->room_title }}"/></figure>
+                </div>
+                <div class="bed_room" style="padding: 30px;">
+                   <h3 style="font-size: 28px; color: #333; margin-bottom: 20px;">{{ $room->room_title }}</h3>
+                   <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;"><strong style="color: #555;">Description:</strong> {!! $room->desecription !!}</p>
+                   <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;"><strong style="color: #555;">Price:</strong> ${{ $room->price }}</p>
+                   <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;"><strong style="color: #555;">WiFi:</strong> {{ $room->wifi ? 'Available' : 'Not Available' }}</p>
+                   <p style="font-size: 16px; line-height: 1.6; margin-bottom: 25px;"><strong style="color: #555;">Room Type:</strong> {{ $room->room_type }}</p>
+                   <a class="btn btn-danger" href="{{ route('booking.form', ['id' => $room->id]) }}" style="background-color: #ff6b6b; border: none; padding: 12px 30px; font-size: 16px; border-radius: 4px; text-transform: uppercase; font-weight: bold;">Book Now</a>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
 </div>
 
-  </center>
-    @endsection
+@endsection
 
-@push('styles')
-<style type="text/css">
-  label{
-    display: inline-block;
-    width: 200px;
-  }
-  input {
-    width: 100%;
-  }
-
-
-@endpush
-    
-@endpush
-
-
-
-
-    @push('scripts')
-  <script type="text/javascript">
-  $(function(){
-
-var dtToday = new Data();
-var month = dtToday.getMonth() + 1;
-var day = dtToday.getDate();
-var year = dtToday.getFullYear();
-if(month < 10)
-month = '0' + month.toString();
-if(day < 10)
-day = '0' + day.toString();
-
-var maxDate = year + '-' + month + '-' + day;
-$('#startDate').attr('min', maxDate);
-$('#endDate').attr('min', maxDate);
-
-
-
-  });
-  
-    @endpush
+<script>
+    // إخفاء الـ loader بعد 3 ثواني من تحميل الصفحة
+    window.onload = function() {
+        setTimeout(function() {
+            document.getElementById('loader-bg').style.display = 'none'; // إخفاء الـ loader بعد 3 ثواني
+        }, 3000); // 3000 ميلي ثانية = 3 ثواني
+    };
+</script>

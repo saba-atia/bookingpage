@@ -7,20 +7,25 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 class RouteServiceProvider extends ServiceProvider
 {
     /**
      * The path to your application's "home" route.
-     *
-     * Typically, users are redirected here after authentication.
-     *
-     * @var string
      */
-    public const HOME = '/home';
+    public const HOME = '/';
+
+    public static function redirectTo()
+    {
+        if (Auth::check() && Auth::user()->is_admin) {
+            return '/dashboard'; 
+        }
+        return '/'; 
+    }
 
     /**
-     * Define your route model bindings, pattern filters, and other route configuration.
+     * Define your route model bindings, pattern filters, etc.
      */
     public function boot(): void
     {

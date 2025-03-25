@@ -154,24 +154,37 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ url('pages/icons/font-awesome.html') }}">
-                <span class="menu-title">Icons</span>
-                <i class="mdi mdi-contacts menu-icon"></i>
-            </a>
+            <a class="nav-link" href="{{ url('booking') }}">
+                <span class="menu-title">Bookings</span>
+                <i class="mdi mdi-briefcase-check-outline menu-icon"></i>            </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ url('pages/forms/basic_elements.html') }}">
-                <span class="menu-title">Forms</span>
-                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+            <a class="nav-link" href="{{ url('create_room') }}">
+                <span class="menu-title">Add Room</span>
+                <i class="mdi mdi-hotel mdi-plus menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url('display_room') }}">
+              <span class="menu-title">All Room</span>
+              <i class="mdi mdi-bed-king menu-icon"></i>
+            </a>
+      </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ url('docs/documentation.html') }}" target="_blank">
-                <span class="menu-title">Documentation</span>
-                <i class="mdi mdi-file-document-box menu-icon"></i>
+            <a class="nav-link" href="{{ url('messages') }}" target="_blank">
+                <span class="menu-title">Messages</span>
+                <i class="mdi mdi-message-text-outline menu-icon"></i>
             </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('users.index') }}">
+              <span class="menu-title">User Management</span>
+              <i class="mdi mdi-account-multiple menu-icon"></i>
+          </a>
+      </li>
+        
+        
     </ul>
 </nav>

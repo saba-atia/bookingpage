@@ -17,7 +17,7 @@
                 <label for="password">Password:</label>
                 <input type="password" name="password" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-success">Add User</button>
+            <button type="submit" class="btn btn-gradient-primary">Add User</button>
         </form>
     </div>
 @endsection

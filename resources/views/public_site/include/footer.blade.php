@@ -5,9 +5,9 @@
              <div class=" col-md-4">
                 <h3>Contact US</h3>
                 <ul class="conta">
-                   <li><i class="fa fa-map-marker" aria-hidden="true"></i> Address</li>
-                   <li><i class="fa fa-mobile" aria-hidden="true"></i> +01 1234569540</li>
-                   <li> <i class="fa fa-envelope" aria-hidden="true"></i><a href="#"> demo@gmail.com</a></li>
+                   <li><i class="fa fa-map-marker" aria-hidden="true"></i> Jordan.Aqaba</li>
+                   <li><i class="fa fa-mobile" aria-hidden="true"></i> +962 798283130</li>
+                   <li> <i class="fa fa-envelope" aria-hidden="true"></i><a href="#"> LuxLodge@gmail.com</a></li>
                 </ul>
              </div>
              <div class="col-md-4">
@@ -15,17 +15,24 @@
                 <ul class="link_menu">
                    <li class="active"><a href="/">Home</a></li>
                    <li><a href="/about"> about</a></li>
-                   <li><a href="/ourroom">Our Room</a></li>
+                   <li><a href="/rooms">Our Room</a></li>
                    <li><a href="/blog">Blog</a></li>
                    <li><a href="/contact">Contact Us</a></li>
                 </ul>
              </div>
              <div class="col-md-4">
-                <h3>News letter</h3>
-                <form class="bottom_form">
+                <h3>Partners</h3>
+                <ul class="social_icon">
+                  <li><a href="#">Orange</i></a></li>
+                  <li><a href="#">Simplon</i></a></li>
+                  <br>
+                  <li><a href="https://www.mota.gov.jo/AR/ListDetails/%D8%A7%D9%84%D8%AC%D9%85%D8%B9%D9%8A%D8%A7%D8%AA__%D8%A7%D9%84%D9%85%D8%AA%D8%AE%D8%B5%D8%B5%D8%A9/1064/1">JHA</i></a></li>
+                  <li><a href="https://aseza.jo/EN/Pages/Directorate_of_Tourism">DOT</i></a></li>
+               </ul>
+                {{-- <form class="bottom_form">
                    <input class="enter" placeholder="Enter your email" type="text" name="Enter your email">
                    <button class="sub_btn">subscribe</button>
-                </form>
+                </form> --}}
                 <ul class="social_icon">
                    <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
                    <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
@@ -41,10 +48,8 @@
                 <div class="col-md-10 offset-md-1">
                    
                    <p>
-                   © 2019 All Rights Reserved. Design by <a href="https://html.design/"> Free Html Templates</a>
-                   <br><br>
-                   Distributed by <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>
-                   </p>
+                     © 2025 LuxLodge.Jordan  <a href="https://themewagon.com/" target="_blank"></a></a>
+                   <br>
 
                 </div>
              </div>
